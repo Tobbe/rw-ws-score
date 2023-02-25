@@ -22,6 +22,9 @@ const config = {
   },
 }
 
+const wsConnections = {}
+const players = {}
+
 /**
  * You can also register Fastify plugins and additional routes for the API and Web sides
  * in the configureFastify function.
@@ -44,6 +47,19 @@ const configureFastify = async (fastify, options) => {
       fastify.get('/ws', { websocket: true }, (connection) => {
         connection.socket.on('message', (message) => {
           console.log(`/ws message: ${message}`)
+
+          try {
+            const player = JSON.parse(message)
+            wsConnections[player.playerId] = connection
+            players[player.playerId] = player.score
+
+            Object.values(wsConnections).forEach((wsConnection) => {
+              wsConnection.socket.send(JSON.stringify(players))
+            })
+          } catch (e) {
+            console.error('Could not parse input', message)
+            console.error('error object:', e)
+          }
         })
 
         connection.socket.on('close', () => {

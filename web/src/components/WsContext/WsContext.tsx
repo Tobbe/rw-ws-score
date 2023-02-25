@@ -1,8 +1,8 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 interface WsContextProps {
-  players: Record<string, number>
-  setScore: (playerId: string, score: number) => void
+  players: Record<string, string>
+  setScore: (playerId: string, score: string) => void
 }
 
 const WsContext = React.createContext<WsContextProps | undefined>(undefined)
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const WsContextProvider: React.FC<Props> = ({ children }) => {
-  const [players, setPlayers] = useState<Record<string, number>>({})
+  const [players, setPlayers] = useState<Record<string, string>>({})
 
   const ws = useRef<WebSocket>()
 
@@ -46,7 +46,7 @@ const WsContextProvider: React.FC<Props> = ({ children }) => {
     }
   }, [])
 
-  const setScore = useCallback((playerId: string, score: number) => {
+  const setScore = useCallback((playerId: string, score: string) => {
     ws.current?.send(JSON.stringify({ playerId, score }))
   }, [])
 

@@ -4,14 +4,19 @@ import { useWsContext } from 'src/components/WsContext/WsContext'
 
 const HomePage = () => {
   const [name, setName] = useState('')
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState('')
   const ws = useWsContext()
 
   return (
     <>
       <label>
         Name:{' '}
-        <input value={name} onChange={(event) => setName(event.target.value)} />
+        <input
+          value={name}
+          onChange={(event) => {
+            setName(event.target.value)
+          }}
+        />
       </label>
       <br />
       <br />
@@ -20,12 +25,14 @@ const HomePage = () => {
         <input
           value={score}
           onChange={(event) => {
-            const score = parseInt(event.target.value, 10)
-            // Set the score in component state to make the input value update
-            // immediately
+            const score = event.target.value
+
+            // Set the score in component state to make the input
+            // value update immediately
             setScore(score)
 
-            // Send to the server to update all clients (including this one)
+            // Send to the server to update all clients (including
+            // this one)
             ws.setScore(name, score)
           }}
         />
