@@ -37,6 +37,20 @@ const config = {
 const configureFastify = async (fastify, options) => {
   if (options.side === 'api') {
     fastify.log.info({ custom: { options } }, 'Configuring api side')
+
+    fastify.register(require('@fastify/websocket'))
+
+    fastify.register(async (fastify) => {
+      fastify.get('/ws', { websocket: true }, (connection) => {
+        connection.socket.on('message', (message) => {
+          console.log(`/ws message: ${message}`)
+        })
+
+        connection.socket.on('close', () => {
+          console.log('Client disconnected')
+        })
+      })
+    })
   }
 
   if (options.side === 'web') {
